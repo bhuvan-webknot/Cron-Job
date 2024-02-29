@@ -9,8 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
 import java.util.List;
 
 import static com.example.cronnotificationsender.CronNotificationSender.models.SubscriptionType.DAILY;
@@ -48,7 +46,7 @@ public class UserService {
     }
 
     // Every day at 5pm
-    @Scheduled(cron = "0 0 17 * * *")
+    @Scheduled(cron = "0 19 17 * * *")
     public void sendDailyEmail() {
         // Fetch all users subscribed to daily emails
         List<User> users = userRepository.findAll();
