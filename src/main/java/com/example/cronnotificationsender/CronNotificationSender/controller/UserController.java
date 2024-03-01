@@ -15,8 +15,6 @@ import java.util.List;
 public class UserController {
     @Autowired
     UserService userService;
-//    @Autowired
-//    EmailSenderService emailSenderService;
 
     @GetMapping("/fetch-users")
     public ResponseEntity<List<User>> fetchUserList() {
@@ -26,20 +24,5 @@ public class UserController {
     @PostMapping("/create-user")
     public ResponseEntity<User> saveUser(@RequestBody User user) {
         return new ResponseEntity<>(userService.saveUser(user), HttpStatusCode.valueOf(200));
-    }
-
-    @GetMapping("/send-daily-mail")
-    public void sendDailyMail(){
-       userService.sendDailyEmail();
-    }
-
-    @GetMapping("/send-weekly-mail")
-    public void sendWeklyMail(){
-        userService.sendWeeklyEmail();
-    }
-
-    @GetMapping("/send-monthly-mail")
-    public void sendMonthlyMail(){
-        userService.sendMonthlyEmail();
     }
 }

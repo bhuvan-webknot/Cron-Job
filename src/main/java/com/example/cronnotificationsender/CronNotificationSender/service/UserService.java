@@ -2,28 +2,23 @@ package com.example.cronnotificationsender.CronNotificationSender.service;
 
 import com.example.cronnotificationsender.CronNotificationSender.models.User;
 import com.example.cronnotificationsender.CronNotificationSender.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.List;
 
-import static com.example.cronnotificationsender.CronNotificationSender.models.SubscriptionType.DAILY;
-import static com.example.cronnotificationsender.CronNotificationSender.models.SubscriptionType.WEEKLY;
-import static com.example.cronnotificationsender.CronNotificationSender.models.SubscriptionType.MONTHLY;
 
 @Service
+@Slf4j
 public class UserService {
     @Autowired
     UserRepository userRepository;
 
     @Autowired
     private JavaMailSender mailSender;
-
-    Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public List<User> fetchAllUsers() {
         return userRepository.findAll();
@@ -42,49 +37,55 @@ public class UserService {
         message.setSubject(subject);
 
         mailSender.send(message);
-        logger.info("Mail Sent to ..."+toEmail);
+        log.info("Mail Sent to ..."+toEmail);
     }
 
     // Every day at 5pm
-    @Scheduled(cron = "0 19 17 * * *")
+    @Scheduled(cron = "40 35 10 * * *")
     public void sendDailyEmail() {
         // Fetch all users subscribed to daily emails
         List<User> users = userRepository.findAll();
         users.forEach(user -> {
             String subject = "Daily BlogPost";
             String text = "Hello "+ user.getUserName() +"\nThis is your daily blogpost email.";
-
-            if(user.getSubscribedTo()==DAILY)
-                sendEmail(user.getUserEmail(),text,subject);
+            user.getSubscribedTo().forEach(ele->{
+                if(ele=="DAILY")
+                    sendEmail(user.getUserEmail(),text,subject);
+            });
         });
     }
 
     // Every week on Sunday at 7pm
-    @Scheduled(cron = "0 0 19 * * SUN")
+    @Scheduled(cron = "50 38 10 * * *")
     public void sendWeeklyEmail() {
         // Fetch all users subscribed to weekly emails
         List<User> users = userRepository.findAll();
         users.forEach(user -> {
             String subject = "Weekly BlogPost";
             String text = "Hello "+ user.getUserName() +"\nThis is your weekly blogpost email.";
-            if(user.getSubscribedTo()==WEEKLY)
-                sendEmail(user.getUserEmail(),text,subject);
+            user.getSubscribedTo().forEach(ele->{
+                log.info(String.valueOf(ele));
+                if(ele=="WEEKLY")
+                    sendEmail(user.getUserEmail(),text,subject);
+            });
         });
     }
 
 
     // Every month on the first day at 7pm
-    @Scheduled(cron = "0 0 19 1 * *")
-    public void sendMonthlyEmail() {
-        // Fetch all users subscribed to monthly emails
-        List<User> users = userRepository.findAll();
-        users.forEach(user -> {
-            String subject = "Weekly BlogPost";
-            String text = "Hello "+ user.getUserName() +"\nThis is your weekly blogpost email.";
-            if(user.getSubscribedTo()==MONTHLY)
-                sendEmail(user.getUserEmail(),text,subject);
-        });
-    }
+//    @Scheduled(cron = "0 0 19 1 * *")
+//    public void sendMonthlyEmail() {
+//        // Fetch all users subscribed to monthly emails
+//        List<User> users = userRepository.findAll();
+//        users.forEach(user -> {
+//            String subject = "Weekly BlogPost";
+//            String text = "Hello "+ user.getUserName() +"\nThis is your weekly blogpost email.";
+//            user.getSubscribedTo().forEach(ele->{
+//                if(ele==MONTHLY)
+//                    sendEmail(user.getUserEmail(),text,subject);
+//            });
+//        });
+//    }
 
 
 
